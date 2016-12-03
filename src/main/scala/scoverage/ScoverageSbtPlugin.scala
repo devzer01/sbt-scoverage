@@ -212,7 +212,7 @@ object ScoverageSbtPlugin extends AutoPlugin {
     val linesCovered = coverage.files.foldLeft(0)((i, c) => i + c.loc)
 
     log.info(statsKeyValue("CodeCoverageAbsLCovered", coverage.loc))
-    log.info(statsKeyValue("CodeCoverageAbsLTotal", 10000)) //value fixed for test
+    log.info(statsKeyValue("CodeCoverageAbsLTotal", coverage.loc)) //value fixed, scoverage doesn't report this
 
     log.info(statsKeyValue("CodeCoverageAbsSCovered", coverage.invokedStatementCount))
     log.info(statsKeyValue("CodeCoverageAbsSTotal", coverage.statementCount))
