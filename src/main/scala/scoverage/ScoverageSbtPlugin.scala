@@ -206,13 +206,20 @@ object ScoverageSbtPlugin extends AutoPlugin {
                                log: Logger) {
 
     def statsKeyValue(key: String, value: Int): String = s"##teamcity[buildStatisticValue key='$key' value='$value']"
-
+    //having statement count is not enough, need to provide lines, teamcity will not produce
+    //the correct result
     // Log statement coverage as per: https://devnet.jetbrains.com/message/5467985
+    val linesCovered = coverage.files.foldLeft(0)((i, c) => i + c.loc)
+
+    log.info(statsKeyValue("CodeCoverageAbsLCovered", coverage.loc))
+    log.info(statsKeyValue("CodeCoverageAbsLTotal", 10000)) //value fixed for test
+
     log.info(statsKeyValue("CodeCoverageAbsSCovered", coverage.invokedStatementCount))
     log.info(statsKeyValue("CodeCoverageAbsSTotal", coverage.statementCount))
 
-    // Log branch coverage as a custom metrics (in percent)
-    log.info(statsKeyValue("CodeCoverageBranch", "%.0f".format(coverage.branchCoveragePercent).toInt))
+    // Log branch coverage exist (no need to use custom
+    log.info(statsKeyValue("CodeCoverageAbsBCovered", coverage.invokedBranchesCount))
+    log.info(statsKeyValue("CodeCoverageAbsBTotal", coverage.branchCount)
 
     // Create the coverage report for teamcity (HTML files)
     if (createCoverageZip)
